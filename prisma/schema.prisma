@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model audit {
+  auditID          Int       @id @default(autoincrement())
+  auditIP          String?   @db.VarChar(255)
+  auditURL         String?   @db.VarChar(255)
+  auditURLMethod   String?   @db.VarChar(255)
+  auditURLPayload  String?   @db.VarChar(255)
+  auditCreatedDate DateTime? @db.DateTime(0)
+}
+
+model user {
+  userID           Int        @id @default(autoincrement())
+  userSecretKey    String?    @db.VarChar(255)
+  userUsername     String?    @db.VarChar(255)
+  userPassword     String?    @db.VarChar(255)
+  userFullName     String?    @db.VarChar(255)
+  userEmail        String?    @db.VarChar(255)
+  userPhone        String?    @db.VarChar(255)
+  userStatus       String?    @db.VarChar(255)
+  userCreatedDate  DateTime?  @db.DateTime(0)
+  userModifiedDate DateTime?  @db.DateTime(0)
+  userrole         userrole[]
+}
+
+model role {
+  roleID           Int        @id @default(autoincrement())
+  roleName         String?    @db.VarChar(255)
+  roleDescription  String?    @db.VarChar(255)
+  roleStatus       String?    @db.VarChar(255)
+  roleCreatedDate  DateTime?  @db.DateTime(0)
+  roleModifiedDate DateTime?  @db.DateTime(0)
+  userrole         userrole[]
+}
+
+model lookup {
+  lookupID           Int       @id @default(autoincrement())
+  lookupOrder        Int?
+  lookupTitle        String?   @db.VarChar(255)
+  lookupRefCode      String?   @db.VarChar(255)
+  lookupValue        String?   @db.VarChar(255)
+  lookupType         String?   @db.VarChar(255)
+  lookupStatus       String?   @db.VarChar(255)
+  lookupCreatedDate  DateTime? @db.DateTime(0)
+  lookupModifiedDate DateTime? @db.DateTime(0)
+}
+
+model userrole {
+  userRoleID          Int      @id @default(autoincrement())
+  userRoleUserID      Int      @default(0)
+  userRoleRoleID      Int      @default(0)
+  userRoleCreatedDate DateTime @db.DateTime(0)
+  role                role     @relation(fields: [userRoleRoleID], references: [roleID], onDelete: NoAction, onUpdate: NoAction, map: "FK_userrole_role")
+  user                user     @relation(fields: [userRoleUserID], references: [userID], onDelete: NoAction, onUpdate: NoAction, map: "FK_userrole_user")
+
+  @@index([userRoleRoleID], map: "FK_userrole_role")
+  @@index([userRoleUserID], map: "FK_userrole_user")
+}
+
+model author {
+  authorID           Int       @id @default(autoincrement())
+  authorName         String?   @db.VarChar(255)
+  authorDOB          DateTime? @db.Date
+  authorCreatedDate  DateTime? @db.DateTime(0)
+  authorModifiedDate DateTime? @db.DateTime(0)
+  book               book[]
+}
+
+model book {
+  bookID           Int           @id @default(autoincrement())
+  authorID         Int?
+  bookName         String?       @db.VarChar(255)
+  bookCreatedDate  DateTime?     @db.DateTime(0)
+  bookModifiedDate DateTime?     @db.DateTime(0)
+  author           author?       @relation(fields: [authorID], references: [authorID], onDelete: NoAction, onUpdate: NoAction, map: "book_ibfk_1")
+  bookLibrary      bookLibrary[]
+
+  @@index([authorID], map: "authorID")
+}
+
+model bookLibrary {
+  bookLibraryID Int      @id @default(autoincrement())
+  bookID        Int?
+  libraryID     Int?
+  book          book?    @relation(fields: [bookID], references: [bookID], onDelete: NoAction, onUpdate: NoAction, map: "bookLibrary_ibfk_1")
+  library       library? @relation(fields: [libraryID], references: [libraryID], onDelete: NoAction, onUpdate: NoAction, map: "bookLibrary_ibfk_2")
+
+  @@index([bookID], map: "bookID")
+  @@index([libraryID], map: "libraryID")
+}
+
+model library {
+  libraryID           Int           @id @default(autoincrement())
+  libraryName         String?       @db.VarChar(255)
+  libraryAddress      String?       @db.VarChar(1000)
+  libraryCreatedDate  DateTime?     @db.DateTime(0)
+  libraryModifiedDate DateTime?     @db.DateTime(0)
+  bookLibrary         bookLibrary[]
+}
