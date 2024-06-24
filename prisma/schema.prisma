@@ -65,12 +65,13 @@ model userrole {
 }
 
 model author {
-  authorID           Int       @id @default(autoincrement())
-  authorName         String?   @db.VarChar(255)
-  authorDOB          DateTime? @db.Date
-  authorCreatedDate  DateTime? @db.DateTime(0)
-  authorModifiedDate DateTime? @db.DateTime(0)
+  authorID           Int           @id @default(autoincrement())
+  authorName         String?       @db.VarChar(255)
+  authorDOB          DateTime?     @db.Date
+  authorCreatedDate  DateTime?     @db.DateTime(0)
+  authorModifiedDate DateTime?     @db.DateTime(0)
   book               book[]
+  bookLibrary        bookLibrary[]
 }
 
 model book {
@@ -86,21 +87,20 @@ model book {
 }
 
 model bookLibrary {
-  bookLibraryID Int      @id @default(autoincrement())
+  bookLibraryID Int     @id @default(autoincrement())
   bookID        Int?
-  libraryID     Int?
-  book          book?    @relation(fields: [bookID], references: [bookID], onDelete: NoAction, onUpdate: NoAction, map: "bookLibrary_ibfk_1")
-  library       library? @relation(fields: [libraryID], references: [libraryID], onDelete: NoAction, onUpdate: NoAction, map: "bookLibrary_ibfk_2")
+  authorID      Int?
+  book          book?   @relation(fields: [bookID], references: [bookID], onDelete: NoAction, onUpdate: NoAction, map: "bookLibrary_ibfk_1")
+  author        author? @relation(fields: [authorID], references: [authorID], onDelete: NoAction, onUpdate: NoAction, map: "bookLibrary_ibfk_2")
 
   @@index([bookID], map: "bookID")
-  @@index([libraryID], map: "libraryID")
+  @@index([authorID], map: "authorID")
 }
 
 model library {
-  libraryID           Int           @id @default(autoincrement())
-  libraryName         String?       @db.VarChar(255)
-  libraryAddress      String?       @db.VarChar(1000)
-  libraryCreatedDate  DateTime?     @db.DateTime(0)
-  libraryModifiedDate DateTime?     @db.DateTime(0)
-  bookLibrary         bookLibrary[]
+  libraryID           Int       @id @default(autoincrement())
+  libraryName         String?   @db.VarChar(255)
+  libraryAddress      String?   @db.VarChar(1000)
+  libraryCreatedDate  DateTime? @db.DateTime(0)
+  libraryModifiedDate DateTime? @db.DateTime(0)
 }

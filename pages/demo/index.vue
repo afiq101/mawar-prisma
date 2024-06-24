@@ -166,7 +166,14 @@ const deleteBook = async (id) => {
 <template>
   <div>
     <LayoutsBreadcrumb />
-
+    <rs-card class="p-5">
+      Prisma URL:
+      <a
+        class="text-blue-500 hover:underline"
+        href="https://www.prisma.io/docs/orm/prisma-client/queries/crud#create-a-deeply-nested-tree-of-records"
+        >https://www.prisma.io/docs/orm/prisma-client/queries/crud#create-a-deeply-nested-tree-of-records</a
+      >
+    </rs-card>
     <rs-card>
       <template #header>
         <div class="flex justify-between items-center">
